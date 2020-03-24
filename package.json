@@ -1,5 +1,5 @@
 {
-  "name": "simple-covid-19-json-fetcher",
+  "name": "simple-covid19-json-fetcher",
   "version": "1.0.0",
   "description": "Fetches covid-19 data in json format using Johns Hopkins CSSE 2019 Novel Coronavirus COVID-19 data as source",
   "main": "src/index.js",
@@ -9,7 +9,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "simple-covid-19-json-fetcher"
+    "url": "simple-covid19-json-fetcher"
   },
   "keywords": [
     "covid-19",

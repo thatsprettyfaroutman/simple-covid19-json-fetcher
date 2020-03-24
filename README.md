@@ -1,1 +1,1 @@
-# simple-covid-19-json-fetcher
+# simple-covid19-json-fetcher
