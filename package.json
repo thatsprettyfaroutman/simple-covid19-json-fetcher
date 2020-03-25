@@ -9,7 +9,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "simple-covid19-json-fetcher"
+    "url": "https://github.com/thatsprettyfaroutman/simple-covid19-json-fetcher.git"
   },
   "keywords": [
     "covid-19",
