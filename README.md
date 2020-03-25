@@ -91,5 +91,5 @@ const covidCountries = await covid19Fetcher(new Date(), {
   }
 })
 
-const us = covidCountries.find(x => x.name === 'United States') // Is found!
+const us = covidCountries.find(x => x.name === 'United States') // found!
 ```
