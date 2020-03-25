@@ -39,7 +39,7 @@ const covidCountries = await covid19Fetcher(targetDate, options)
   // (keys will still be camelCased)
   fetchRaw: false,
 
-  // Passing a `entryMutator` function enables entries to be manually
+  // Passing an `entryMutator` function enables entries to be manually
   // modified before they are being processed.
   // Useful for renaming country or state names etc.
   entryMutator: null
