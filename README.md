@@ -2,6 +2,10 @@
 
 Fetches data from Johns Hopkins CSSE - [2019 Novel Coronavirus COVID-19 (2019-nCoV) Data Repository](https://github.com/CSSEGISandData/COVID-19)
 
+## Demo
+
+[Code Sand Box Demo](https://codesandbox.io/s/covid-19-data-z2tw7)
+
 ## Install
 
 ```
