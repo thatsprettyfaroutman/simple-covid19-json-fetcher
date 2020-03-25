@@ -20,11 +20,30 @@ npm install simple-covid19-json-fetcher
 import covidFetcher from 'simple-covid19-json-fetcher'
 
 ;(async () => {
-
-  // Attempt to fetch today's data - fallbacks to previous day on 404
   const covidCountries = await covidFetcher(new Date())
-
 })()
+```
+
+## API
+
+```
+const covidCountries = await covidFetcher(targetDate, options)
+```
+
+## Options
+
+```
+{
+  // Setting `fetchRaw` to true will cause the function to
+  // return the country data unformatted
+  // (keys will still be camelCased)
+  fetchRaw: false,
+
+  // Passing a `entryMutator` function enables entries to be manually
+  // modified before they are being processed.
+  // Useful for renaming country or state names etc.
+  entryMutator: null
+}
 ```
 
 ## Data Format

@@ -11,9 +11,11 @@ import {
   pluck,
   sum,
   sortBy,
+  sort,
   isNil,
   find,
   path,
+  head,
   __
 } from 'ramda'
 import { csv } from 'd3-fetch'
@@ -41,17 +43,22 @@ const getFirstOfProp = (prop, data) =>
     path([prop])
   )(data)
 
+const getLatestDate = pipe(
+  pluck,
+  sort((a, b) => (a < b ? 1 : -1)),
+  head
+)
+
 //
 //
 // Normalization
 //
 
-const normalizeEntry = (itemRaw, i) => {
-  if (!itemRaw) {
+const normalizeEntry = item => {
+  if (!item) {
     return
   }
 
-  const item = camelcaseKeys(itemRaw)
   const baseItem = omit(['lat', 'long'], item)
   const latitude = Number(item.latitude || item.lat)
   const longitude = Number(item.longitude || item.long)
@@ -84,6 +91,7 @@ const getStateData = pipe(
     const active = getSumOfProp('active', entries)
     const latitude = getFirstOfProp('latitude', entries)
     const longitude = getFirstOfProp('longitude', entries)
+    const lastUpdate = getLatestDate('lastUpdate', entries)
 
     return {
       name,
@@ -92,53 +100,62 @@ const getStateData = pipe(
       recovered,
       active,
       latitude,
-      longitude
+      longitude,
+      lastUpdate
     }
   }),
   sortBy(prop('name'))
 )
 
-const getCountryData = pipe(
-  // Normalize entries
-  map(normalizeEntry),
-  filter(Boolean),
+const getCountryData = (data, entryMutator) =>
+  pipe(
+    // Normalize entries
+    map(camelcaseKeys),
+    map((x, ...restArgs) => (entryMutator ? entryMutator(x, ...restArgs) : x)),
+    map(normalizeEntry),
+    filter(Boolean),
 
-  // Group by countries
-  groupBy(prop('countryRegion')),
-  toPairs,
+    // Group by countries
+    groupBy(prop('countryRegion')),
+    toPairs,
 
-  // Fix country data
-  map(([name, states]) => {
-    const confirmed = getSumOfProp('confirmed', states)
-    const deaths = getSumOfProp('deaths', states)
-    const recovered = getSumOfProp('recovered', states)
-    const active = getSumOfProp('active', states)
+    // Fix country data
+    map(([name, states]) => {
+      const confirmed = getSumOfProp('confirmed', states)
+      const deaths = getSumOfProp('deaths', states)
+      const recovered = getSumOfProp('recovered', states)
+      const active = getSumOfProp('active', states)
 
-    // Calculate country latitude and longitude. Not ideal
-    const latitude = getAverageOfProp('latitude', states)
-    const longitude = getAverageOfProp('longitude', states)
+      // Calculate country latitude and longitude. Not ideal
+      const latitude = getAverageOfProp('latitude', states)
+      const longitude = getAverageOfProp('longitude', states)
+      const lastUpdate = getLatestDate('lastUpdate', states)
 
-    return {
-      name,
-      // Only pick provinces if they have names
-      states: getStateData(states),
-      confirmed,
-      deaths,
-      recovered,
-      active,
-      latitude,
-      longitude
-    }
-  })
-)
+      return {
+        name,
+        states: getStateData(states),
+        confirmed,
+        deaths,
+        recovered,
+        active,
+        latitude,
+        longitude,
+        lastUpdate
+      }
+    })
+  )(data)
 
 //
 //
 // Fetcher
 //
 
-const simpleCovid19JsonFetcher = async targetDate => {
+const simpleCovid19JsonFetcher = async (targetDate, options = {}) => {
   const date = new Date(targetDate)
+  const { fetchRaw, entryMutator } = {
+    ...{ fetchRaw: false, entryMutator: null },
+    ...options
+  }
 
   if (!isValid(date)) {
     throw new Error(
@@ -146,13 +163,24 @@ const simpleCovid19JsonFetcher = async targetDate => {
     )
   }
 
-  let dateStr = format(date, 'MM-dd-yyyy')
+  const dateStr = format(date, 'MM-dd-yyyy')
 
   try {
     const json = await csv(
       `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${dateStr}.csv`
     )
-    return getCountryData(json)
+
+    if (fetchRaw) {
+      return Array.isArray(json)
+        ? json
+            .map(camelcaseKeys)
+            .map((x, ...restArgs) =>
+              entryMutator ? entryMutator(x, ...restArgs) : x
+            )
+        : json
+    }
+
+    return getCountryData(json, entryMutator)
   } catch (error) {
     const previousDate = subDays(date, 1)
 
@@ -161,7 +189,7 @@ const simpleCovid19JsonFetcher = async targetDate => {
       throw error
     }
 
-    return simpleCovid19JsonFetcher(previousDate)
+    return simpleCovid19JsonFetcher(previousDate, { fetchRaw, entryMutator })
   }
 }
 
