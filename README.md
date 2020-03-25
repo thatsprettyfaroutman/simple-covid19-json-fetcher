@@ -17,17 +17,17 @@ npm install simple-covid19-json-fetcher
 ## Usage
 
 ```
-import covidFetcher from 'simple-covid19-json-fetcher'
+import covid19Fetcher from 'simple-covid19-json-fetcher'
 
 ;(async () => {
-  const covidCountries = await covidFetcher(new Date())
+  const covidCountries = await covid19Fetcher(new Date())
 })()
 ```
 
 ## API
 
 ```
-const covidCountries = await covidFetcher(targetDate, options)
+const covidCountries = await covid19Fetcher(targetDate, options)
 ```
 
 ## Options
@@ -75,4 +75,21 @@ const covidCountries = await covidFetcher(targetDate, options)
   ...more countries
 
 ]
+```
+
+## Entry Mutator Example
+
+`entryMutator` is a function that is passed to a map function at the beginning of the data processing.
+
+```
+const covidCountries = await covid19Fetcher(new Date(), {
+  entryMutator: entry => {
+    if (entry.countryRegion === 'US') {
+      return { ...entry, countryRegion: 'United States' }
+    }
+    return entry
+  }
+})
+
+const us = covidCountries.find(x => x.name === 'United States') // Is found!
 ```
