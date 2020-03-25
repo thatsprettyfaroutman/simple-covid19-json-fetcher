@@ -1,6 +1,6 @@
 {
   "name": "simple-covid19-json-fetcher",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Fetches covid-19 data in json format using Johns Hopkins CSSE 2019 Novel Coronavirus COVID-19 data as source",
   "main": "src/index.js",
   "scripts": {
