@@ -80,6 +80,7 @@ const covidCountries = await covid19Fetcher(targetDate, options)
 ## Entry Mutator Example
 
 `entryMutator` is a function that is passed to a map function at the beginning of the data processing.
+It can be used to manipulate the COVID-19 data before its being processed.
 
 ```javascript
 const covidCountries = await covid19Fetcher(new Date(), {
@@ -144,4 +145,26 @@ const usIdahoAndUtah = await covid19Fetcher(new Date(), {
 ]
 
 ```
+
+Each entry passed to the `entryMutator` has the following properties:
+
+```javascript
+{
+  "fips": "16087",
+  "admin2": "Washington",
+  "provinceState": "Idaho",
+  "countryRegion": "US",
+  "lastUpdate": "2020-03-26 23:48:35",
+  "lat": "44.45275475",
+  "long": "-116.78476880000001",
+  "confirmed": "0",
+  "deaths": "0",
+  "recovered": "0",
+  "active": "0",
+  "combinedKey": "Washington, Idaho, US"
+}
+```
+
+Note, that the data is fetched from [Johns Hopkins CSSE's COVID-19 repository](https://github.com/CSSEGISandData/COVID-19) and may change at any time.
+
 
