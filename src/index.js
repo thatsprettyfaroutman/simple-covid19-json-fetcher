@@ -177,6 +177,7 @@ const simpleCovid19JsonFetcher = async (targetDate, options = {}) => {
             .map((x, ...restArgs) =>
               entryMutator ? entryMutator(x, ...restArgs) : x
             )
+            .filter(Boolean)
         : json
     }
 
