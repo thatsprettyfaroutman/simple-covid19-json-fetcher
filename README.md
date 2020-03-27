@@ -94,7 +94,7 @@ const covidCountries = await covid19Fetcher(new Date(), {
 const us = covidCountries.find(x => x.name === 'United States') // found!
 ```
 
-`entryMutator` can be used for filtering, only the returned entries are included, others are discarded:
+`entryMutator` can be used for filtering. Only the returned entries are included, others are discarded:
 ```javascript
 const usIdahoAndUtah = await covid19Fetcher(new Date(), {
   entryMutator: entry => {
