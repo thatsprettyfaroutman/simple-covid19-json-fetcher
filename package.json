@@ -27,7 +27,7 @@
     "date-fns": "^2.11.0",
     "lodash.camelcase": "^4.3.0",
     "ramda": "^0.27.0",
-    "whatwg-fetch": "^3.0.0"
+    "whatwg-fetch": "2.0.4"
   },
   "devDependencies": {
     "babel-jest": "^25.1.0",
